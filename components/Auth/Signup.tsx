@@ -1,6 +1,7 @@
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,7 +9,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 const Signup = () => {
+  const [image, setImage] = useState<string | null>(null);
+  console.log(setImage);
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
   return (
     <View style={styles.container}>
       <Image
@@ -16,8 +34,21 @@ const Signup = () => {
         source={require("@/assets/images/login.png")}
         style={styles.imgStyle}
       />
+      {image && (
+        <Image
+          source={{ uri: image }}
+          style={{ height: 75, width: 75, borderRadius: "100%" }}
+        />
+      )}
       <Text style={styles.title}>Create a New Account</Text>
       <View style={styles.fieldsContainer}>
+        <TouchableOpacity style={styles.fieldsContainer} onPress={pickImage}>
+          <Text style={{ color: "gray", fontWeight: "bold" }}>
+            {" "}
+            Uplouad Photo Here
+          </Text>
+        </TouchableOpacity>
+
         <Text style={styles.fieldLabel}>Username</Text>
         <TextInput placeholder="" style={styles.textInput} />
         <Text style={styles.fieldLabel}>Password</Text>
